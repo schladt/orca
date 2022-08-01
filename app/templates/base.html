@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ORCA</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <style>
+
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    /* .row.content {height: 100%} */
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding: '25px';
+      background-color: #f1f1f1;
+      height: 100%;
+      width: 300px;
+    }
+        
+    /* On small screens, set height to 'auto' for the grid */
+    @media screen and (max-width: 767px) {
+      .row.content {height: auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<div class="container-fluid" style="height: 100%;">
+  <div class="row content">
+    <div class="col-sm-3 sidenav" style="height: 100vh;">
+      <div style="text-align: center; padding-right: 40px; padding-bottom: 25px;">
+        <h3>ORCA</h3><br>
+        <a href="/">
+          <img src="{{ url_for('static', filename='orca-image.png') }}", style="width: 150px; display: block; margin-left: auto; margin-right: auto;">
+        </a>
+        
+
+      </div>
+      <ul class="nav nav-pills nav-stacked">
+        <li><a href="/">Dashboard</a></li>
+        <li><a href="{{ url_for('artifact') }}">Artifacts</a></li>
+        <li><a href="{{ url_for('tag') }}">Tags</a></li>
+        <li><a href="{{ config.JUPYTER_SERVER }}">Data Mining</a></li>
+        <li><a href="http://{{ config.CAPE_URL }}:{{ config.CAPE_PORT }}">CAPE</a></li>
+        <li><a href="/admin">Admin</a></li>
+      </ul><br>
+      <div style="position: absolute; bottom: 0;">
+        ORCA Image by <a href=" https://www.vectorportal.com" >Vectorportal.com</a>,  <a class="external text" href="https://creativecommons.org/licenses/by/4.0/" >CC BY</a>
+      </div>   
+    </div>
+    <br>
+    
+    <div class="col-sm-9">
+      <div class="well">
+        
+        <h2>Open aRtifact Characterization & Analysis</h2>
+        <br>
+        <form class="form-inline" action="/search", method="post">
+          <input class="form-control form-control-lg" name="q" type="text" placeholder="Search..." style="width:400px">
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    
+        <h5> Use the search bar above for full-text exploration of artifacts and tags.
+          (Tip: try malware family names such as LokiBot or host/network artifacts like registry keys, hashes, or domain names)
+        </h5>
+    
+      </div>
+      {% block content %} {% endblock %}
+    </div>
+  </div>
+</div>
+<script>
+  $(function () {
+      setNavigation();
+  });
+
+  function setNavigation() {
+      var path = window.location.pathname;
+      path = decodeURIComponent(path);
+      a = path.split("/");
+      if (a.length == 1) {
+        path = "/";
+      } else {
+        path = "/" + a[1];
+      }
+      
+      $(".nav a").each(function () {
+          var href = $(this).attr('href');    
+          // console.log('path: ' + path + ' href: ' + href)
+          if (path === href) {
+              $(this).closest('li').addClass('active');
+          }
+      });
+  }
+
+</script>
+
+</body>
+</html>

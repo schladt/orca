@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+<div class="row">
+  <div class="col-sm-3">
+    <div class="well">
+      <h4>Total Number of Artifacts</h4>
+      <p>{{ num_artifacts }}</p> 
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well">
+      <h4>Number of Tags</h4>
+      <p>{{ num_tags }}</p> 
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well">
+      <h4>Completed CAPE Analyses</h4>
+      <p>{{ cape_processed }}</p> 
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="well">
+      <h4>Completed ORCA Analyses</h4>
+      <p>{{ orca_processed }}</p> 
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-4">
+    <div class="well">
+
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+          var data = google.visualization.arrayToDataTable([
+            ['Disposition', 'Fully Processed Artifacts'],
+            ['Benign',     {{ benign_processed }}],
+            ['Malicious',  {{ mal_processed }} ]
+          ]);
+
+          var options = {
+            is3D: false,
+            backgroundColor: { fill:'transparent' },
+            legend: {position:'bottom'},
+            charArea: {left:0, top:0, width:'100%', height:'100%'}
+          };
+
+          var chart = new google.visualization.PieChart(document.getElementById('benign-piechart'));
+
+          chart.draw(data, options);
+        }
+      </script>
+      <h4>Disposition (fully processed)</h4>
+      <div id="benign-piechart"></div>
+    </div>
+  </div>
+
+
+  <div class="col-sm-4">
+    <div class="well">
+
+      <script type="text/javascript">
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Malware Family', 'Artifact Count'],
+            {% for family in family_counts %}
+              ['{{ family.1 }}', {{ family.0 }}],
+            {% endfor %}
+          ]);
+  
+          var options = {
+            pieHole: 0.2,
+            backgroundColor: { fill:'transparent' },
+            charArea: {left:0, top:0, width:'100%', height:'100%'}
+          };
+  
+          var chart = new google.visualization.PieChart(document.getElementById('family-donutchart'));
+          chart.draw(data, options);
+        }
+      </script>
+      <h4>Malware Families of Processed Artifacts</h4>
+      <div id="family-donutchart"></div>
+
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="well">
+
+      <script type="text/javascript">
+        google.charts.load("current", {packages:["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Signature Name', 'Artifact Count'],
+            {% for signature in signature_counts %}
+              ['{{ signature.1 }}', {{ signature.0 }}],
+            {% endfor %}
+          ]);
+  
+          var options = {
+            pieHole: 0.2,
+            backgroundColor: { fill:'transparent' },
+            charArea: {left:0, top:0, width:'100%', height:'100%'}
+          };
+  
+          var chart = new google.visualization.PieChart(document.getElementById('signature-donutchart'));
+          chart.draw(data, options);
+        }
+      </script>
+      <h4>Signatures Found in Processed Artifacts</h4>
+      <div id="signature-donutchart"></div>        
+      
+
+
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="well">
+      <h3>Recently Processed Artifacts</h3>
+      <table id="artifact-table" class="table table-striped table-sm" style="table-layout: fixed; width: 100%">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 25%;">Basic Info</th>
+            <th scope="col" style="width: 10%;">Disposition</th>
+            <th scope="col" style="width: 10%;">Families</th>
+            <th scope="col" style="width: 10%;">Signatures</th>
+            <th scope="col" style="width: 45%;">File Hashes</th>
+          </tr>
+        </thead>
+      {% for artifact in recent_artifacts %}  
+
+        <tr>
+        <td style="width: 100%; overflow-wrap: break-word; word-wrap: break-word" >
+            <b>ID:</b><a href="/artifact/{{ artifact.id }}"> {{ artifact.id }} </a><br>
+            <b>NAME:</b> {{ artifact.tags.name }}<br>
+            <b>TYPE:</b> {{ artifact.tags.type }}</td>
+
+        {% if artifact.tags.disposition is defined %}
+          <td>{{ artifact.tags.disposition }}</td>
+        {% else %}
+          <td>unknown</td>
+        {% endif %}
+
+
+        <td>
+          {% if artifact.tags.family is defined %}
+            {% for family in artifact.tags.family %}
+              {{ family }}<br>
+            {% endfor %}
+          {% else %}
+            none
+          {% endif %}
+    
+        </td>
+
+        <td>
+          {% if artifact.tags.signature_name is defined %}
+            {% for signature in artifact.tags.signature_name %}
+              {{ signature }}<br>
+            {% endfor %}
+          {% else %}
+            none
+          {% endif %}
+    
+        </td>
+
+  
+        <td style="width: 100%; overflow-wrap: break-word; word-wrap: break-word; font-size: x-small;">
+            <b>MD5:</b> {{ artifact.tags.md5}} <br>
+            <b>SHA1:</b> {{ artifact.tags.sha1 }} <br> 
+            <b>SHA256:</b> {{ artifact.tags.sha256 }} <br>
+            <b>SHA3_384:</b> {{ artifact.tags.sha3_384}} <br>
+            <b>SHA512:</b> {{ artifact.tags.sha512 }}
+        </td>
+        </tr>
+      {% endfor %}
+      </table>
+
+    </div>
+  </div>
+  
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#artifact-table').DataTable({"pageLength": 5});
+} );
+</script>
+
+{% endblock %}

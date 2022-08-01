@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if artifact_id is defined %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well">
+        <table class="table table-sm" style="table-layout: fixed; width: 100%">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 25%;">Property</th>
+              <th scope="col" style="width: 75%;">Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>ID</b></td>
+              <td>{{ artifact_info.id }}</td>
+            </tr>
+            <tr>
+              <td><b>Name</b></td>
+              <td>{{ artifact_info.tags.name }}</td>
+            </tr>
+            <tr>
+              <td><b>Hashes</b></td>
+              <td style="width: 100%; overflow-wrap: break-word; word-wrap: break-word;">
+                <b>MD5:</b> {{ artifact_info.tags.md5}} <br>
+                <b>SHA1:</b> {{ artifact_info.tags.sha1 }} <br> 
+                <b>SHA256:</b> {{ artifact_info.tags.sha256 }} <br>
+                <b>SHA3_384:</b> {{ artifact_info.tags.sha3_384}} <br>
+                <b>SHA512:</b> {{ artifact_info.tags.sha512 }}
+              </td>
+            </tr>
+            <tr>
+              <td><b>File Type</b></td>
+              <td>{{ artifact_info.tags.type }}</td>
+            </tr>
+            <tr>
+              <td><b>Disposition</b></td>
+              {% if artifact_info.tags.disposition is defined %}
+                <td>{{ artifact_info.tags.disposition }}</td>
+              {% else %}
+                <td>unknown</td>
+              {% endif %}
+            </tr>
+            <tr>
+              <td><b>Signatures</b></td>
+              <td>
+                {% if artifact_info.tags.signature_name is defined %}
+                  {% for signature in artifact_info.tags.signature_name %}
+                    {{ signature }}<br>
+                  {% endfor %}
+                {% else %}
+                  none
+                {% endif %}
+          
+              </td>
+            </tr>
+            <tr>
+              <td><b>Families</b></td>
+              <td>
+                {% if artifact_info.tags.family is defined %}
+                  {% for family in artifact_info.tags.family %}
+                    {{ family }}<br>
+                  {% endfor %}
+                {% else %}
+                  none
+                {% endif %}
+          
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="well">
+          <h3>Tags Associated with Artifact {{ artifact_id }}:</h3>
+          <table id="tags-table" class="table table-striped table-sm" style="table-layout: fixed; width: 100%">
+            <thead>
+              <tr>
+                <th scope="col" style="width: 10%;">Tag ID</th>
+                <th scope="col" style="width: 10%;">Tag Type</th>
+                <th scope="col" style="width: 70%;">Tag Name</th>
+                <th scope="col" style="width: 10%;">Artifact Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tag in tags %}
+              <tr>
+                <td><a href="/tag/{{ tag.0 }}">{{ tag.0 }}</a></td>
+                <td>{{ tag.1 }}</td>
+                <td style="width: 100%; overflow-wrap: break-word; word-wrap: break-word" >{{ tag.2 }}</td>
+                <td>{{ tag.3 }}</td>
+              </tr>
+              {% endfor%}
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+
+{% endif %}
+
+<h2>Please enter a search term to find artifacts.</h2>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#tags-table').DataTable();
+} );
+</script>
+
+{% endblock %}

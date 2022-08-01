@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="well">
+        <h3>Search Results for: <i><small>{{ term }}</small></i></h3>
+        {% if tags is none %}
+        No results found.
+        {% else %}
+        <table id="tags-table" class="table table-striped table-sm" style="table-layout: fixed; width: 100%">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 10%;">Tag ID</th>
+              <th scope="col" style="width: 10%;">Tag Type</th>
+              <th scope="col" style="width: 70%;">Tag Name</th>
+              <th scope="col" style="width: 10%;">Artifact Count</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tag in tags %}
+            <tr>
+              <td><a href="/tag/{{ tag.0 }}">{{ tag.0 }}</a></td>
+              <td>{{ tag.1 }}</td>
+              <td style="width: 100%; overflow-wrap: break-word; word-wrap: break-word" >{{ tag.2 }}</td>
+              <td>{{ tag.3 }}</td>
+            </tr>
+            {% endfor%}
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#tags-table').DataTable();
+} );
+</script>
+
+{% endblock %}

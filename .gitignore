@@ -1,0 +1,17 @@
+# python virtual environment
+env/
+
+# cache
+__pycache__/
+
+# developement databases
+db.sql
+
+# mocha temp files
+mocha-master/
+
+# nohup out
+nohup.out
+
+# jupyter 
+.ipynb_checkpoints/

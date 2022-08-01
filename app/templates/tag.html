@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if tag_id is defined %}
+
+<div class="row">
+    <div class="col-sm-12">
+    <div class="well">
+        <table class="table table-sm" style="table-layout: fixed; width: 100%">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 10%;">Tag ID</th>
+                    <th scope="col" style="width: 10%;">Tag Type</th>
+                    <th scope="col" style="width: 70%;">Tag Value</th>
+                    <th scope="col" style="width: 10%;">Artifact Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ tag.id }}</td>
+                    <td>{{ tag.type }}</td>
+                    <td>{{ tag.value }}</td>
+                    <td>{{ artifact_count }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+    <div class="well">
+        <h3>Associated Artifacts</h3>
+        <table id="artifact-table" class="table table-sm table-striped" style="table-layout: fixed; width: 100%">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 25%;">Artifact ID</th>
+                    <th scope="col" style="width: 75%;">Hashes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for artifact in artifacts %}
+                <tr>
+                    <td><a href="/artifact/{{ artifact.id }}">{{ artifact.id }}</a></td>
+                    <td>
+                    {% if artifact.md5 is not none %}
+                        <b>MD5: </b>{{ artifact.md5 }}<br>
+                    {% endif %}
+                    {% if artifact.sha1 is not none %}
+                        <b>SHA1: </b>{{ artifact.sha1 }}<br>
+                    {% endif %}
+                    {% if artifact.sha256 is not none %}
+                        <b>SHA256: </b>{{ artifact.sha256 }}<br>
+                    {% endif %}
+                    {% if artifact.sha384 is not none %}
+                        <b>SHA3_384: </b>{{ artifact.sha3_384 }}<br>
+                    {% endif %}
+                    {% if artifact.sha512 is not none %}
+                        <b>SHA512: </b>{{ artifact.sha512 }}<br>
+                    {% endif %}
+                
+                
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+    </div>
+</div>
+
+{% else %}
+<h2>Please enter a search term to find tags.</h2>
+{% endif %}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.2/css/jquery.dataTables.min.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#artifact-table').DataTable();
+} );
+</script>
+
+{% endblock %}
